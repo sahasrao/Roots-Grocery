@@ -1,4 +1,6 @@
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { Route, Switch } from 'wouter'
+import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import CartPage from './pages/Cart'
 import CheckoutPage from './pages/Checkout'
@@ -6,6 +8,9 @@ import ConfirmationPage from './pages/Confirmation'
 import Home from './pages/Home'
 import NotFoundPage from './pages/NotFound'
 import ProductPage from './pages/Product'
+import ProfilePage from './pages/Profile'
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''
 
 function Router() {
   return (
@@ -16,6 +21,7 @@ function Router() {
           <Route path="/product/:id" component={ProductPage} />
           <Route path="/cart" component={CartPage} />
           <Route path="/checkout" component={CheckoutPage} />
+          <Route path="/profile" component={ProfilePage} />
           <Route path="/confirmation" component={ConfirmationPage} />
           <Route component={NotFoundPage} />
         </Switch>
@@ -24,10 +30,26 @@ function Router() {
   )
 }
 
-export default function App() {
+function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <CartProvider>
+    <AuthProvider>
+      <CartProvider>{children}</CartProvider>
+    </AuthProvider>
+  )
+}
+
+export default function App() {
+  const app = (
+    <AppProviders>
       <Router />
-    </CartProvider>
+    </AppProviders>
+  )
+
+  if (!googleClientId) {
+    return app
+  }
+
+  return (
+    <GoogleOAuthProvider clientId={googleClientId}>{app}</GoogleOAuthProvider>
   )
 }
