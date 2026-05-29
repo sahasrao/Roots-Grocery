@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Link, useLocation } from 'wouter'
-import { Leaf, Menu, Search, ShoppingBag } from 'lucide-react'
+import { Leaf, Menu, Search, ShoppingBag, User } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { filterProducts, formatPrice } from '../data/products'
 import type { Product } from '../types/product'
 
-const DIETS = ['Vegetarian', 'Vegan', 'Keto', 'Low-sugar', 'Gluten-free']
+import { DIETS } from '../data/diets'
 
 function ProductCard({
   product,
@@ -70,6 +71,7 @@ function ProductCard({
 
 export default function Home() {
   const [, setLocation] = useLocation()
+  const { user } = useAuth()
   const { totalItems, addItem } = useCart()
   const [search, setSearch] = useState('')
   const [activeDiet, setActiveDiet] = useState<string | null>(null)
@@ -118,9 +120,28 @@ export default function Home() {
             >
               Cart
             </Link>
+            <Link
+              href="/profile"
+              className="text-base font-bold hover:text-accent transition-colors text-foreground"
+            >
+              Profile
+            </Link>
           </nav>
         </div>
 
+        <div className="flex items-center gap-2">
+        <Link href="/profile" className="relative p-1" aria-label="Profile">
+          {user?.picture ? (
+            <img
+              src={user.picture}
+              alt={user.name}
+              className="w-7 h-7 rounded-full border-2 border-accent object-cover"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <User className="w-6 h-6 text-foreground" />
+          )}
+        </Link>
         <Link href="/cart" className="relative p-1" aria-label="View cart">
           <ShoppingBag className="w-6 h-6 text-foreground" />
           {totalItems > 0 && (
@@ -129,6 +150,7 @@ export default function Home() {
             </span>
           )}
         </Link>
+        </div>
       </header>
 
       {menuOpen && (
@@ -161,6 +183,13 @@ export default function Home() {
                   className="text-xl font-bold hover:text-accent transition-colors text-foreground"
                 >
                   Cart
+                </Link>
+                <Link
+                  href="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-xl font-bold hover:text-accent transition-colors text-foreground"
+                >
+                  Profile
                 </Link>
               </nav>
             </div>

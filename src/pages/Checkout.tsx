@@ -1,15 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'wouter'
 import { ArrowLeft } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { formatPrice } from '../data/products'
+import { readProfilePreferences } from '../lib/profileStorage'
 
 export default function CheckoutPage() {
   const [, setLocation] = useLocation()
+  const { user } = useAuth()
   const { items, subtotal, clearCart } = useCart()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [name, setName] = useState(user?.name ?? '')
+  const [email, setEmail] = useState(user?.email ?? '')
   const [address, setAddress] = useState('')
+
+  useEffect(() => {
+    if (user) {
+      const prefs = readProfilePreferences(user.id)
+      if (prefs.address) setAddress(prefs.address)
+    }
+  }, [user])
 
   if (items.length === 0) {
     return (

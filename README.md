@@ -27,7 +27,41 @@ npm run preview
 
 ## Stack
 
-React 19, TypeScript, Vite, Tailwind CSS v4, Wouter, Lucide React
+React 19, TypeScript, Vite, Tailwind CSS v4, Wouter, Lucide React, Google Sign-In (`@react-oauth/google`)
+
+## Google sign-in (Profile)
+
+The **Profile** page (`/profile`) supports Sign in with Google.
+
+### 1. Create OAuth credentials
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/)
+2. Create or select a project
+3. Go to **APIs & Services → Credentials → Create credentials → OAuth client ID**
+4. Application type: **Web application**
+5. **Authorized JavaScript origins:**
+   - `http://localhost:5173` (local dev)
+   - `https://your-app.onrender.com` (production URL after deploy)
+6. Copy the **Client ID**
+
+### 2. Local development
+
+```bash
+cp .env.example .env
+# Paste your Client ID into .env:
+# VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+npm run dev
+```
+
+### 3. Render production
+
+In the Render Dashboard → your static site → **Environment**:
+
+| Key | Value |
+|-----|-------|
+| `VITE_GOOGLE_CLIENT_ID` | Your Google OAuth Web Client ID |
+
+Redeploy after adding the variable (Vite bakes env vars at build time).
 
 ## Deploy to Render
 
